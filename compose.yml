@@ -1,0 +1,98 @@
+name: nexus
+
+services:
+  migrate:
+    image: nexus-api:latest
+    container_name: nexus_migrate
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - nexus
+    restart: "no"
+    command: ["node", "node_modules/typeorm/cli.js", "migration:run", "-d", "dist/src/data-source.js"]
+
+  api:
+    image: nexus-api:latest
+    container_name: nexus_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - nexus
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  db:
+    image: postgis/postgis:18-3.6
+    container_name: nexus_db
+    env_file:
+      - .postgres.env
+    restart: unless-stopped
+    networks:
+      - nexus
+    volumes:
+      - db_data:/var/lib/postgresql
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$POSTGRES_USER\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  cache:
+    image: redis:8-alpine
+    container_name: nexus_cache
+    restart: unless-stopped
+    networks:
+      - nexus
+    volumes:
+      - redis_data:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  nexus:
+    driver: bridge
+    name: nexus_network
+
+volumes:
+  db_data:
+    driver: local
+    name: nexus_db_data
+  redis_data:
+    driver: local
+    name: nexus_redis_data

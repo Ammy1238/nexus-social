@@ -1,0 +1,78 @@
+name: nexus
+
+services:
+  api:
+    container_name: nexus_api
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8257:8257"
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+      - /app/node_modules
+    networks:
+      - nexus
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+  db:
+    container_name: nexus_db
+    image: postgis/postgis:18-3.6
+    platform: linux/amd64
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - .postgres.env
+    networks:
+      - nexus
+    volumes:
+      - db_data:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER -d $DB_NAME"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  cache:
+    container_name: nexus_cache
+    image: redis:8-alpine
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - redis_data:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    networks:
+      - nexus
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  nexus:
+    driver: bridge
+    name: nexus_network
+
+volumes:
+  db_data:
+    driver: local
+    name: nexus_db_data
+  redis_data:
+    driver: local
+    name: nexus_redis_data
